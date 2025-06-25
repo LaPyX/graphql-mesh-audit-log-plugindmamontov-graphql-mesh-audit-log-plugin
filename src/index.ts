@@ -190,7 +190,7 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
                 } else {
                     message.event.fields.push({
                         code: 'result',
-                        value: JSON.stringify({ error: result?.message || result.toString() }),
+                        value: JSON.stringify({ error: result?.message || result?.toString() }),
                     });
                 }
 
