@@ -133,7 +133,7 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
                             code: 'external_id',
                             value: Array.isArray(externalId)
                                 ? JSON.stringify(externalId)
-                                : externalId.toString(),
+                                : externalId?.toString(),
                         },
                         {
                             code: 'source_name',
