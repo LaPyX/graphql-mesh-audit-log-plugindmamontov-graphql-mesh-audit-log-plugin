@@ -1,9 +1,8 @@
 import { Kafka, type Message } from 'kafkajs';
-import lodashGet from 'lodash.get';
 import protobuf from 'protobufjs';
 import { Md5 } from 'ts-md5';
 import { type MeshPlugin, type MeshPluginOptions } from '@graphql-mesh/types';
-import { EventSource, EventType, type AuditConfig } from './types';
+import {EventSource, EventType, type AuditConfig} from './types';
 import { evaluate } from './utils';
 
 export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshPlugin<any> {
@@ -83,6 +82,16 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
         await producer.disconnect();
     };
 
+    const getExternalId = (args: any, options: any) => {
+        const func = new Function(
+            'args',
+            'env',
+            'return ' + options,
+        );
+
+        return func(args, process.env);
+    }
+
     return {
         onDelegate(payload) {
             const source = sources.find(
@@ -107,7 +116,7 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
 
             const args = payload.key ? payload.argsFromKeys([payload.key]) : payload.args;
 
-            const externalId = source.externalId ? lodashGet(args, source.externalId) : null;
+            const externalId = getExternalId(args, source.externalId);
 
             const message = {
                 entity: {
