@@ -2,7 +2,7 @@ import { Kafka, type Message } from 'kafkajs';
 import protobuf from 'protobufjs';
 import { Md5 } from 'ts-md5';
 import { type MeshPlugin, type MeshPluginOptions } from '@graphql-mesh/types';
-import {EventSource, EventType, type AuditConfig} from './types';
+import { EventSource, EventType, type AuditConfig } from './types';
 import { evaluate } from './utils';
 
 export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshPlugin<any> {
@@ -37,7 +37,7 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
     let protobufMessage: protobuf.Type;
 
     const loadProto = (): void => {
-        // eslint-disable-next-line unicorn/prefer-module
+        // eslint-disable-next-line
         protobuf.load(__dirname + '/message.proto', (err, root) => {
             if (err) {
                 throw err;
@@ -82,15 +82,9 @@ export default function useAudit(options: MeshPluginOptions<AuditConfig>): MeshP
         await producer.disconnect();
     };
 
-    const getExternalId = (args: any, options: any) => {
-        const func = new Function(
-            'args',
-            'env',
-            'return ' + options,
-        );
-
-        return func(args, process.env);
-    }
+    const getExternalId = (args: Record<string, any>, options: string) => {
+        return new Function('args', 'env', 'return ' + options)(args, process.env);
+    };
 
     return {
         onDelegate(payload) {
